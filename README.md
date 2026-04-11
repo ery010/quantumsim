@@ -58,6 +58,55 @@ QUANTUMSIM_BACKEND=gpu python -m pytest tests/ -v
 
 ---
 
+## Running tests
+
+Tests live in `tests/test_primitives.py` and validate against known analytic results — gate identities, normalization constraints, and physical invariants like trace preservation and Hermiticity.
+
+**Mac / Linux**
+
+```bash
+# set the source path and run all tests
+PYTHONPATH=src python -m pytest tests/ -v
+
+# run a single test class
+PYTHONPATH=src python -m pytest tests/test_primitives.py::TestStateVectorInit -v
+
+# run a single test
+PYTHONPATH=src python -m pytest tests/test_primitives.py::TestStateVectorInit::test_zero_state_shape -v
+
+# stop at first failure
+PYTHONPATH=src python -m pytest tests/ -v -x
+
+# show print statements
+PYTHONPATH=src python -m pytest tests/ -v -s
+```
+
+**Windows (PowerShell)**
+
+```powershell
+# set the source path for the current session
+$env:PYTHONPATH = "D:\path\to\quantumsim\src"
+
+# run all tests
+py -m pytest tests/ -v
+
+# run a single test class
+py -m pytest tests/test_primitives.py::TestStateVectorInit -v
+
+# run a single test
+py -m pytest tests/test_primitives.py::TestStateVectorInit::test_zero_state_shape -v
+
+# stop at first failure
+py -m pytest tests/ -v -x
+
+# show print statements
+py -m pytest tests/ -v -s
+```
+
+Note: `$env:PYTHONPATH` only persists for the current terminal session. Set it again if you open a new terminal.
+
+---
+
 ## Roadmap
 
 Once the core protocols are implemented, the goal is a benchmark suite comparing CPU vs GPU throughput across trial counts (10k → 10M) and noise levels, with reproducible results exportable to JSON.
