@@ -85,7 +85,7 @@ PYTHONPATH=src python -m pytest tests/ -v -s
 
 ```powershell
 # set the source path for the current session
-$env:PYTHONPATH = "D:\path\to\quantumsim\src"
+$env:PYTHONPATH = "C:\path\to\quantumsim\src"
 
 # run all tests
 py -m pytest tests/ -v
