@@ -6,7 +6,7 @@ Run with: pytest tests/ -v
 
 import numpy as np
 import pytest
-from quantumsim.primitives import StateVector, DensityMatrix
+from primitives import StateVector, DensityMatrix
 
 xp = np  # CPU backend for all tests
 
