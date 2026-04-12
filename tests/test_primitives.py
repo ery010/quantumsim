@@ -81,6 +81,7 @@ class TestStateVectorInit:
         (10, 100),
     ])
     def test_plus_state_normalization(self, n_qubits, batch_size):
+        """Sum of |amplitude|^2 per row should equal 1."""
         sv = StateVector(n_qubits=n_qubits, batch_size=batch_size, xp=xp, init="plus")
         assert_close(np.sum(np.abs(sv.data)**2, axis=1), np.ones(batch_size))
 
@@ -91,6 +92,7 @@ class TestStateVectorInit:
         (10, 100),
     ])
     def test_rand_state_normalization(self, n_qubits, batch_size):
+        """Sum of |amplitude|^2 per row should equal 1."""
         sv = StateVector(n_qubits=n_qubits, batch_size=batch_size, xp=xp, init="rand")
         assert_close(np.sum(np.abs(sv.data)**2, axis=1), np.ones(batch_size))
 
