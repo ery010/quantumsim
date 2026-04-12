@@ -74,15 +74,36 @@ class TestStateVectorInit:
         sv = StateVector(n_qubits=n_qubits, batch_size=batch_size, xp=xp)
         assert_close(np.sum(np.abs(sv.data)**2, axis=1), np.ones(batch_size))
 
-    def test_plus_state_normalization(self):
-        pass
+    @pytest.mark.parametrize("n_qubits, batch_size", [
+        (1, 10),
+        (3, 20),
+        (5, 30),
+        (10, 100),
+    ])
+    def test_plus_state_normalization(self, n_qubits, batch_size):
+        sv = StateVector(n_qubits=n_qubits, batch_size=batch_size, xp=xp, init="plus")
+        assert_close(np.sum(np.abs(sv.data)**2, axis=1), np.ones(batch_size))
 
-    def test_rand_state_normalization(self):
-        pass
+    @pytest.mark.parametrize("n_qubits, batch_size", [
+        (1, 10),
+        (3, 20),
+        (5, 30),
+        (10, 100),
+    ])
+    def test_rand_state_normalization(self, n_qubits, batch_size):
+        sv = StateVector(n_qubits=n_qubits, batch_size=batch_size, xp=xp, init="rand")
+        assert_close(np.sum(np.abs(sv.data)**2, axis=1), np.ones(batch_size))
 
-    def test_dim_derived_correctly(self):
+    @pytest.mark.parametrize("n_qubits, batch_size", [
+        (1, 10),
+        (3, 20),
+        (5, 30),
+        (10, 100),
+    ])
+    def test_dim_derived_correctly(self, n_qubits, batch_size):
         """dim should equal 2 ** n_qubits."""
-        pass
+        sv = StateVector(n_qubits=n_qubits, batch_size=batch_size, xp=xp)
+        assert sv.dim == 2 ** n_qubits
 
 
 # ---------------------------------------------------------------------------
