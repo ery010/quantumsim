@@ -17,7 +17,10 @@ xp = np  # CPU backend for all tests
 
 def assert_close(a, b, tol=1e-10, label=""):
     """Check two arrays are element-wise close within tolerance."""
-    pass
+    a = np.array(a)
+    b = np.array(b)
+    max_err = np.max(np.abs(a - b))
+    assert max_err < tol, f"{label} — max error {max_err:.2e} exceeds tol {tol:.2e}"
 
 
 # ---------------------------------------------------------------------------
@@ -26,21 +29,50 @@ def assert_close(a, b, tol=1e-10, label=""):
 
 class TestStateVectorInit:
 
-    def test_zero_state_shape(self):
+    @pytest.mark.parametrize("n_qubits, batch_size, expected_shape", [
+        (1, 10,   (10, 2)),
+        (3, 20,   (20, 8)),
+        (5, 30,   (30, 32)),
+        (10, 100, (100, 1024)),
+    ])
+    def test_zero_state_shape(self, n_qubits, batch_size, expected_shape):
         """data shape should be (batch_size, dim)."""
-        pass
+        sv = StateVector(n_qubits=n_qubits, batch_size=batch_size, xp=xp)
+        assert sv.data.shape == expected_shape
 
-    def test_zero_state_amplitudes(self):
+    @pytest.mark.parametrize("n_qubits, batch_size", [
+        (1, 10),
+        (3, 20),
+        (5, 30),
+        (10, 100),
+    ])
+    def test_zero_state_amplitudes(self, n_qubits, batch_size):
         """All amplitude should be in first basis state."""
-        pass
-
-    def test_zero_state_dtype(self):
+        sv = StateVector(n_qubits=n_qubits, batch_size=batch_size, xp=xp)
+        assert_close(sv.data[:, 0], np.ones(batch_size, dtype=complex))
+        assert_close(sv.data[:, 1:], np.zeros((batch_size, 2**n_qubits - 1), dtype=complex))
+    
+    @pytest.mark.parametrize("n_qubits, batch_size", [
+        (1, 10),
+        (3, 20),
+        (5, 30),
+        (10, 100),
+    ])
+    def test_zero_state_dtype(self, n_qubits, batch_size):
         """dtype should be complex."""
-        pass
+        sv = StateVector(n_qubits=n_qubits, batch_size=batch_size, xp=xp)
+        assert sv.data.dtype == np.complex128
 
-    def test_zero_state_normalization(self):
+    @pytest.mark.parametrize("n_qubits, batch_size", [
+        (1, 10),
+        (3, 20),
+        (5, 30),
+        (10, 100),
+    ])
+    def test_zero_state_normalization(self, n_qubits, batch_size):
         """Sum of |amplitude|^2 per row should equal 1."""
-        pass
+        sv = StateVector(n_qubits=n_qubits, batch_size=batch_size, xp=xp)
+        assert_close(np.sum(np.abs(sv.data)**2, axis=1), np.ones(batch_size))
 
     def test_plus_state_normalization(self):
         pass
