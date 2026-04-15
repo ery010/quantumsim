@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Package build artifacts
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Jupyter (if you use notebooks for exploration)
+.ipynb_checkpoints/
+*.ipynb
+
+# VSCode
+.vscode/
+
+# Environment variables
+.env
+
+# OS
+.DS_Store          # Mac
+Thumbs.db          # Windows
+desktop.ini        # Windows
+
+# Benchmark outputs (generated files, not source)
+results/
+*.json
+*.hdf5
