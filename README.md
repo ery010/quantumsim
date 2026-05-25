@@ -1,4 +1,4 @@
-# quantum-gpu-projects
+# quantumsim
 
 A collection of GPU-accelerated quantum simulation projects
 built on CuPy and NumPy. Each project explores a different
