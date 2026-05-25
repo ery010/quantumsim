@@ -1,118 +1,52 @@
-# quantumsim
+# quantum-gpu-projects
 
-A GPU-accelerated quantum protocol simulator built on CuPy and NumPy. Simulates thousands of independent quantum trials in parallel using a backend-agnostic design — the same protocol code runs on CPU or GPU by switching one environment variable.
-
-Built as a portfolio project exploring high-performance computing applied to quantum networking and computing protocols.
-
----
-
-## Status
-
-- [ ] `StateVector` and `DensityMatrix` primitives (batched, backend-agnostic)
-- [ ] Noise channels: depolarizing, amplitude damping, phase damping, erasure
-- [ ] 28 unit tests validated against analytic results
-- [ ] BB84 QKD protocol
-- [ ] E91 entanglement-based QKD
-- [ ] Grover's search algorithm
-- [ ] GPU vs CPU benchmark suite
+A collection of GPU-accelerated quantum simulation projects
+built on CuPy and NumPy. Each project explores a different
+area of quantum computing and networking, unified by a
+shared high-performance simulation framework.
 
 ---
 
-## Design
+## Projects
 
-The core idea is that every operation runs over a *batch* of quantum states simultaneously rather than simulating trials sequentially. A `StateVector` with `batch_size=1_000_000` runs as a single GPU kernel, not a Python loop.
+### 1. Quantum Clock Network Simulator
+*Directory: `clock-network/`*
 
-Backend switching is handled by a single import alias:
+GPU-accelerated simulation of the Komar et al. quantum
+clock network protocol — the same protocol studied in the
+published IEEE research above.
+
+Simulates GHZ-state preparation across K geographically
+distributed clock nodes, phase accumulation during
+interrogation, and parity-based phase estimation to
+characterize the Heisenberg-limited precision advantage
+(1/N scaling) over the standard quantum limit (1/√N).
+
+State vector size scales as 2^(K×n) complex amplitudes.
+GPU acceleration via CuPy; benchmarked against NumPy
+baseline across network sizes.
+
+**Status:**
+- [ ] GHZ state preparation across K nodes
+- [ ] Phase rotation under realistic detuning model
+- [ ] Parity measurement and phase estimation
+- [ ] Allan deviation comparison: quantum/quantum vs classical
+- [ ] GPU vs CPU benchmark suite (N = K×n qubits)
+
+---
+
+### 2. Quantum Protocol Simulator
+*Directory: `protocol-sim/`*
+
+A backend-agnostic framework for simulating quantum
+cryptographic and computing protocols at scale. The core
+idea: simulate thousands of independent quantum trials
+in parallel as a single GPU kernel rather than a Python loop.
+
+A `StateVector` with `batch_size=1_000_000` runs as one
+GPU operation, making large-scale Monte Carlo simulation
+of quantum protocols practical.
+
+Backend switching is handled by a single environment variable:
 
 ```python
-# quantumsim/backend.py
-xp = cupy  # or numpy — set QUANTUMSIM_BACKEND=gpu to switch
-```
-
-All protocol and primitive code uses `xp` instead of `np` or `cp` directly, so nothing above the backend layer needs to change when switching hardware.
-
----
-
-## Quickstart
-
-```bash
-git clone https://github.com/yourusername/quantumsim.git
-cd quantumsim
-pip install -r requirements.txt
-
-# run tests
-python -m pytest tests/ -v
-
-# GPU backend (requires CuPy and CUDA)
-QUANTUMSIM_BACKEND=gpu python -m pytest tests/ -v
-```
-
----
-
-## Requirements
-
-- Python 3.10+
-- NumPy
-- CuPy (optional, for GPU backend — see [CuPy installation](https://docs.cupy.dev/en/stable/install.html))
-- pytest
-
----
-
-## Running tests
-
-Tests live in `tests/test_primitives.py` and validate against known analytic results — gate identities, normalization constraints, and physical invariants like trace preservation and Hermiticity.
-
-**Mac / Linux**
-
-```bash
-# set the source path and run all tests
-PYTHONPATH=src python -m pytest tests/ -v
-
-# run a single test class
-PYTHONPATH=src python -m pytest tests/test_primitives.py::TestStateVectorInit -v
-
-# run a single test
-PYTHONPATH=src python -m pytest tests/test_primitives.py::TestStateVectorInit::test_zero_state_shape -v
-
-# stop at first failure
-PYTHONPATH=src python -m pytest tests/ -v -x
-
-# show print statements
-PYTHONPATH=src python -m pytest tests/ -v -s
-```
-
-**Windows (PowerShell)**
-
-```powershell
-# set the source path for the current session
-$env:PYTHONPATH = "C:\path\to\quantumsim\src"
-
-# run all tests
-py -m pytest tests/ -v
-
-# run a single test class
-py -m pytest tests/test_primitives.py::TestStateVectorInit -v
-
-# run a single test
-py -m pytest tests/test_primitives.py::TestStateVectorInit::test_zero_state_shape -v
-
-# stop at first failure
-py -m pytest tests/ -v -x
-
-# show print statements
-py -m pytest tests/ -v -s
-```
-
-Note: `$env:PYTHONPATH` only persists for the current terminal session. Set it again if you open a new terminal.
-
----
-
-## Roadmap
-
-Once the core protocols are implemented, the goal is a benchmark suite comparing CPU vs GPU throughput across trial counts (10k → 10M) and noise levels, with reproducible results exportable to JSON.
-
----
-
-## Background
-
-This project came out of prior research in quantum network simulation during a graduate program. The focus here is less on the physics and more on what happens when you need to simulate protocols at scale — where the bottleneck shifts from algorithmic complexity to memory bandwidth and kernel utilization.
